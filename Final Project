@@ -1,0 +1,131 @@
+using System;
+using System.Collections.Generic;
+
+namespace ContractorManagement
+{
+    // Base class Contractor
+    public class Contractor
+    {
+        private string name;
+        private string number;
+        private string startDate;
+
+        // Constructor
+        public Contractor(string name, string number, string startDate)
+        {
+            this.name = name;
+            this.number = number;
+            this.startDate = startDate;
+        }
+
+        // Accessor methods
+        public string GetName() => name;
+        public string GetNumber() => number;
+        public string GetStartDate() => startDate;
+
+        // Mutator methods
+        public void SetName(string name) => this.name = name;
+        public void SetNumber(string number) => this.number = number;
+        public void SetStartDate(string startDate) => this.startDate = startDate;
+
+        // String representation
+        public override string ToString()
+        {
+            return $"Contractor Name: {name}, Number: {number}, Start Date: {startDate}";
+        }
+    }
+
+    // Derived class Subcontractor
+    public class Subcontractor : Contractor
+    {
+        private int shift; // 1 for Day, 2 for Night
+        private double hourlyRate;
+
+        // Constructor
+        public Subcontractor(string name, string number, string startDate, int shift, double hourlyRate)
+            : base(name, number, startDate)
+        {
+            this.shift = shift;
+            this.hourlyRate = hourlyRate;
+        }
+
+        // Accessor methods
+        public int GetShift() => shift;
+        public double GetHourlyRate() => hourlyRate;
+
+        // Mutator methods
+        public void SetShift(int shift) => this.shift = shift;
+        public void SetHourlyRate(double hourlyRate) => this.hourlyRate = hourlyRate;
+
+        // Calculate pay with shift differential
+        public double ComputePay(double hoursWorked)
+        {
+            double pay = hourlyRate * hoursWorked;
+            if (shift == 2) // Night shift
+            {
+                pay += pay * 0.03; // 3% shift differential
+            }
+            return pay;
+        }
+
+        // String representation
+        public override string ToString()
+        {
+            string shiftName = (shift == 1) ? "Day" : "Night";
+            return $"{base.ToString()}, Shift: {shiftName}, Hourly Rate: {hourlyRate:C}";
+        }
+    }
+
+    // Main program
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Subcontractor> subcontractors = new List<Subcontractor>();
+
+            while (true)
+            {
+                Console.WriteLine("\n--- Subcontractor Management ---");
+
+                // Input subcontractor details
+                Console.Write("Enter Subcontractor Name: ");
+                string name = Console.ReadLine();
+
+                Console.Write("Enter Contractor Number: ");
+                string number = Console.ReadLine();
+
+                Console.Write("Enter Start Date (YYYY-MM-DD): ");
+                string startDate = Console.ReadLine();
+
+                Console.Write("Enter Shift (1 for Day, 2 for Night): ");
+                int shift = int.Parse(Console.ReadLine());
+
+                Console.Write("Enter Hourly Rate: ");
+                double hourlyRate = double.Parse(Console.ReadLine());
+
+                // Create Subcontractor object
+                Subcontractor subcontractor = new Subcontractor(name, number, startDate, shift, hourlyRate);
+                subcontractors.Add(subcontractor);
+
+                // Calculate pay example
+                Console.Write("Enter Hours Worked: ");
+                double hoursWorked = double.Parse(Console.ReadLine());
+
+                double pay = subcontractor.ComputePay(hoursWorked);
+                Console.WriteLine($"Pay for {name}: {pay:C}");
+
+                // Continue?
+                Console.Write("Add another subcontractor? (y/n): ");
+                string cont = Console.ReadLine().ToLower();
+                if (cont != "y") break;
+            }
+
+            // Display all subcontractors
+            Console.WriteLine("\n--- Subcontractor Records ---");
+            foreach (var sub in subcontractors)
+            {
+                Console.WriteLine(sub);
+            }
+        }
+    }
+}
